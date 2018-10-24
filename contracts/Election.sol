@@ -8,6 +8,9 @@ contract Election {
 		uint voteCount;
 	}
 
+	// Map accounts that have voted
+	mapping(address => bool) public voters;
+
 	// Map id to Candidates to store them
 	mapping(uint => Candidate) public candidates;
 
@@ -15,7 +18,7 @@ contract Election {
 	uint public candidatesCount;
 
 	// Constructor
-	function Election() public {
+	constructor() public {
 		addCandidate("Candidate 1");
 		addCandidate("Candidate 2");
 	}
@@ -26,4 +29,18 @@ contract Election {
 		candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
 	}
 
+	function vote (uint _candidateId) public {
+		// require that the voter has not already voted
+		require(!voters[msg.sender]);
+
+		// require that the candidate id is valid
+		require(_candidateId > 0 && _candidateId <= candidatesCount);
+
+		// record the voter
+		voters[msg.sender] = true;
+
+		//update the voteCount
+		candidates[_candidateId].voteCount++;
+
+	}
 }

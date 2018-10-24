@@ -33,12 +33,12 @@ App = {
     });
   },
 
-  render: function() {
+render: function() {
     var electionInstance;
     var loader = $("#loader");
     var content = $("#content");
 
-    //loader.show();
+    loader.show();
     content.hide();
 
     // Load account data
@@ -75,10 +75,29 @@ App = {
           candidatesSelect.append(candidateOption);
         });
       }
+      return electionInstance.voters(App.account);
+    }).then(function(hasVoted) {
+      // Do not allow a user to vote
+      if(hasVoted) {
+        $('form').hide();
+      }
       loader.hide();
       content.show();
     }).catch(function(error) {
       console.warn(error);
+    });
+  },
+
+  castVote: function() {
+    var candidateId = $('#candidatesSelect').val();
+    App.contracts.Election.deployed().then(function(instance) {
+      return instance.vote(candidateId, { from: App.account });
+    }).then(function(result) {
+      // Wait for votes to update
+      $("#content").hide();
+      $("#loader").show();
+    }).catch(function(err) {
+      console.error(err);
     });
   }
 };
