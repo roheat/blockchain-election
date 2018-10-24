@@ -13,5 +13,8 @@ npm run dev
 ```
 
 Sign in to Metamask
+
 Reload the page
+
 Change accounts in metamasks
+
